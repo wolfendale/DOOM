@@ -95,8 +95,8 @@ void F_CastDrawer(void);
 void F_StartFinale(void) {
   gameaction = ga_nothing;
   gamestate = GS_FINALE;
-  viewactive = false;
-  automapactive = false;
+  viewactive = FALSE;
+  automapactive = FALSE;
 
   // Okay - IWAD dependend stuff.
   // This has been changed severly, and
@@ -107,7 +107,7 @@ void F_StartFinale(void) {
   case shareware:
   case registered:
   case retail: {
-    S_ChangeMusic(mus_victor, true);
+    S_ChangeMusic(mus_victor, TRUE);
 
     switch (gameepisode) {
     case 1:
@@ -135,7 +135,7 @@ void F_StartFinale(void) {
 
   // DOOM II and missions packs with E1, M34
   case commercial: {
-    S_ChangeMusic(mus_read_m, true);
+    S_ChangeMusic(mus_read_m, TRUE);
 
     switch (gamemap) {
     case 6:
@@ -171,7 +171,7 @@ void F_StartFinale(void) {
 
   // Indeterminate.
   default:
-    S_ChangeMusic(mus_read_m, true);
+    S_ChangeMusic(mus_read_m, TRUE);
     finaleflat = "F_SKY1"; // Not used anywhere else.
     finaletext = c1text;   // FIXME - other text, music?
     break;
@@ -185,7 +185,7 @@ boolean F_Responder(event_t *event) {
   if (finalestage == 2)
     return F_CastResponder(event);
 
-  return false;
+  return FALSE;
 }
 
 //
@@ -344,12 +344,12 @@ void F_StartCast(void) {
   castnum = 0;
   caststate = &states[mobjinfo[castorder[castnum].type].seestate];
   casttics = caststate->tics;
-  castdeath = false;
+  castdeath = FALSE;
   finalestage = 2;
   castframes = 0;
   castonmelee = 0;
-  castattacking = false;
-  S_ChangeMusic(mus_evil, true);
+  castattacking = FALSE;
+  S_ChangeMusic(mus_evil, TRUE);
 }
 
 //
@@ -365,7 +365,7 @@ void F_CastTicker(void) {
   if (caststate->tics == -1 || caststate->nextstate == S_NULL) {
     // switch from deathstate to next monster
     castnum++;
-    castdeath = false;
+    castdeath = FALSE;
     if (castorder[castnum].name == NULL)
       castnum = 0;
     if (mobjinfo[castorder[castnum].type].seesound)
@@ -453,7 +453,7 @@ void F_CastTicker(void) {
 
   if (castframes == 12) {
     // go into attack frame
-    castattacking = true;
+    castattacking = TRUE;
     if (castonmelee)
       caststate = &states[mobjinfo[castorder[castnum].type].meleestate];
     else
@@ -471,7 +471,7 @@ void F_CastTicker(void) {
     if (castframes == 24 ||
         caststate == &states[mobjinfo[castorder[castnum].type].seestate]) {
     stopattack:
-      castattacking = false;
+      castattacking = FALSE;
       castframes = 0;
       caststate = &states[mobjinfo[castorder[castnum].type].seestate];
     }
@@ -488,21 +488,21 @@ void F_CastTicker(void) {
 
 boolean F_CastResponder(event_t *ev) {
   if (ev->type != ev_keydown)
-    return false;
+    return FALSE;
 
   if (castdeath)
-    return true; // already in dying frames
+    return TRUE; // already in dying frames
 
   // go into death frame
-  castdeath = true;
+  castdeath = TRUE;
   caststate = &states[mobjinfo[castorder[castnum].type].deathstate];
   casttics = caststate->tics;
   castframes = 0;
-  castattacking = false;
+  castattacking = FALSE;
   if (mobjinfo[castorder[castnum].type].deathsound)
     S_StartSound(NULL, mobjinfo[castorder[castnum].type].deathsound);
 
-  return true;
+  return TRUE;
 }
 
 void F_CastPrint(char *text) {

@@ -281,7 +281,7 @@ void P_LoadThings(int lump) {
 
   mt = (mapthing_t *)data;
   for (i = 0; i < numthings; i++, mt++) {
-    spawn = true;
+    spawn = TRUE;
 
     // Do not spawn cool, new monsters if !commercial
     if (gamemode != commercial) {
@@ -296,11 +296,11 @@ void P_LoadThings(int lump) {
       case 65: // Former Human Commando
       case 66: // Revenant
       case 84: // Wolf SS
-        spawn = false;
+        spawn = FALSE;
         break;
       }
     }
-    if (spawn == false)
+    if (spawn == FALSE)
       break;
 
     // Do spawn all other stuff.
@@ -479,7 +479,7 @@ void P_GroupLines(void) {
   }
 
   // build line tables for each sector
-  linebuffer = Z_Malloc(total * 4, PU_LEVEL, 0);
+  linebuffer = Z_Malloc(total * sizeof(line_t*), PU_LEVEL, 0);
   sector = sectors;
   for (i = 0; i < numsectors; i++, sector++) {
     M_ClearBox(bbox);
@@ -620,7 +620,10 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill) {
 // P_Init
 //
 void P_Init(void) {
+  printf("P_InitSwitchList\n");
   P_InitSwitchList();
+  printf("P_InitPicAnims\n");
   P_InitPicAnims();
+  printf("P_InitSprites\n");
   R_InitSprites(sprnames);
 }

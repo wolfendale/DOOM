@@ -399,7 +399,7 @@ void R_StoreWallRange(int start, int stop) {
     // single sided line
     midtexture = texturetranslation[sidedef->midtexture];
     // a single sided line is terminal, so it must mark ends
-    markfloor = markceiling = true;
+    markfloor = markceiling = TRUE;
     if (linedef->flags & ML_DONTPEGBOTTOM) {
       vtop = frontsector->floorheight + textureheight[sidedef->midtexture];
       // bottom of texture at bottom
@@ -462,25 +462,25 @@ void R_StoreWallRange(int start, int stop) {
     if (worldlow != worldbottom ||
         backsector->floorpic != frontsector->floorpic ||
         backsector->lightlevel != frontsector->lightlevel) {
-      markfloor = true;
+      markfloor = TRUE;
     } else {
       // same plane on both sides
-      markfloor = false;
+      markfloor = FALSE;
     }
 
     if (worldhigh != worldtop ||
         backsector->ceilingpic != frontsector->ceilingpic ||
         backsector->lightlevel != frontsector->lightlevel) {
-      markceiling = true;
+      markceiling = TRUE;
     } else {
       // same plane on both sides
-      markceiling = false;
+      markceiling = FALSE;
     }
 
     if (backsector->ceilingheight <= frontsector->floorheight ||
         backsector->floorheight >= frontsector->ceilingheight) {
       // closed door
-      markceiling = markfloor = true;
+      markceiling = markfloor = TRUE;
     }
 
     if (worldhigh < worldtop) {
@@ -513,7 +513,7 @@ void R_StoreWallRange(int start, int stop) {
     // allocate space for masked texture tables
     if (sidedef->midtexture) {
       // masked midtexture
-      maskedtexture = true;
+      maskedtexture = TRUE;
       ds_p->maskedtexturecol = maskedtexturecol = lastopening - rw_x;
       lastopening += rw_stopx - rw_x;
     }
@@ -567,13 +567,13 @@ void R_StoreWallRange(int start, int stop) {
 
   if (frontsector->floorheight >= viewz) {
     // above view plane
-    markfloor = false;
+    markfloor = FALSE;
   }
 
   if (frontsector->ceilingheight <= viewz &&
       frontsector->ceilingpic != skyflatnum) {
     // below view plane
-    markceiling = false;
+    markceiling = FALSE;
   }
 
   // calculate incremental stepping values for texture edges

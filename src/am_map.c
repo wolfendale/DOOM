@@ -199,7 +199,7 @@ static int grid = 0;
 
 static int leveljuststarted = 1; // kluge until AM_LevelInit() is called
 
-boolean automapactive = false;
+boolean automapactive = FALSE;
 static int finit_width = SCREENWIDTH;
 static int finit_height = SCREENHEIGHT - 32;
 
@@ -268,7 +268,7 @@ static int followplayer = 1; // specifies whether to follow the player around
 static unsigned char cheat_amap_seq[] = {0xb2, 0x26, 0x26, 0x2e, 0xff};
 static cheatseq_t cheat_amap = {cheat_amap_seq, 0};
 
-static boolean stopped = true;
+static boolean stopped = TRUE;
 
 extern boolean viewactive;
 // extern byte screens[][SCREENWIDTH*SCREENHEIGHT];
@@ -419,7 +419,7 @@ void AM_initVariables(void) {
   int pnum;
   static event_t st_notify = {ev_keyup, AM_MSGENTERED};
 
-  automapactive = true;
+  automapactive = TRUE;
   fb = screens[0];
 
   f_oldloc.x = MAXINT;
@@ -509,9 +509,9 @@ void AM_Stop(void) {
   static event_t st_notify = {0, ev_keyup, AM_MSGEXITED};
 
   AM_unloadPics();
-  automapactive = false;
+  automapactive = FALSE;
   ST_Responder(&st_notify);
-  stopped = true;
+  stopped = TRUE;
 }
 
 //
@@ -522,7 +522,7 @@ void AM_Start(void) {
 
   if (!stopped)
     AM_Stop();
-  stopped = false;
+  stopped = FALSE;
   if (lastlevel != gamemap || lastepisode != gameepisode) {
     AM_LevelInit();
     lastlevel = gamemap;
@@ -560,43 +560,43 @@ boolean AM_Responder(event_t *ev) {
   static int bigstate = 0;
   static char buffer[20];
 
-  rc = false;
+  rc = FALSE;
 
   if (!automapactive) {
     if (ev->type == ev_keydown && ev->data1 == AM_STARTKEY) {
       AM_Start();
-      viewactive = false;
-      rc = true;
+      viewactive = FALSE;
+      rc = TRUE;
     }
   }
 
   else if (ev->type == ev_keydown) {
 
-    rc = true;
+    rc = TRUE;
     switch (ev->data1) {
     case AM_PANRIGHTKEY: // pan right
       if (!followplayer)
         m_paninc.x = FTOM(F_PANINC);
       else
-        rc = false;
+        rc = FALSE;
       break;
     case AM_PANLEFTKEY: // pan left
       if (!followplayer)
         m_paninc.x = -FTOM(F_PANINC);
       else
-        rc = false;
+        rc = FALSE;
       break;
     case AM_PANUPKEY: // pan up
       if (!followplayer)
         m_paninc.y = FTOM(F_PANINC);
       else
-        rc = false;
+        rc = FALSE;
       break;
     case AM_PANDOWNKEY: // pan down
       if (!followplayer)
         m_paninc.y = -FTOM(F_PANINC);
       else
-        rc = false;
+        rc = FALSE;
       break;
     case AM_ZOOMOUTKEY: // zoom out
       mtof_zoommul = M_ZOOMOUT;
@@ -608,7 +608,7 @@ boolean AM_Responder(event_t *ev) {
       break;
     case AM_ENDKEY:
       bigstate = 0;
-      viewactive = true;
+      viewactive = TRUE;
       AM_Stop();
       break;
     case AM_GOBIGKEY:
@@ -639,16 +639,16 @@ boolean AM_Responder(event_t *ev) {
       break;
     default:
       cheatstate = 0;
-      rc = false;
+      rc = FALSE;
     }
     if (!deathmatch && cht_CheckCheat(&cheat_amap, ev->data1)) {
-      rc = false;
+      rc = FALSE;
       cheating = (cheating + 1) % 3;
     }
   }
 
   else if (ev->type == ev_keyup) {
-    rc = false;
+    rc = FALSE;
     switch (ev->data1) {
     case AM_PANRIGHTKEY:
       if (!followplayer)
@@ -718,7 +718,7 @@ void AM_doFollowPlayer(void) {
 //
 //
 void AM_updateLightLev(void) {
-  static nexttic = 0;
+  static int nexttic = 0;
   // static int litelevels[] = { 0, 3, 5, 6, 6, 7, 7, 7 };
   static int litelevels[] = {0, 4, 7, 10, 12, 14, 15, 15};
   static int litelevelscnt = 0;
@@ -772,9 +772,9 @@ void AM_clearFB(int color) { memset(fb, color, f_w * f_h); }
 boolean AM_clipMline(mline_t *ml, fline_t *fl) {
   enum { LEFT = 1, RIGHT = 2, BOTTOM = 4, TOP = 8 };
 
-  register outcode1 = 0;
-  register outcode2 = 0;
-  register outside;
+  register int outcode1 = 0;
+  register int outcode2 = 0;
+  register int outside;
 
   fpoint_t tmp;
   int dx;
@@ -803,7 +803,7 @@ boolean AM_clipMline(mline_t *ml, fline_t *fl) {
     outcode2 = BOTTOM;
 
   if (outcode1 & outcode2)
-    return false; // trivially outside
+    return FALSE; // trivially outside
 
   if (ml->a.x < m_x)
     outcode1 |= LEFT;
@@ -816,7 +816,7 @@ boolean AM_clipMline(mline_t *ml, fline_t *fl) {
     outcode2 |= RIGHT;
 
   if (outcode1 & outcode2)
-    return false; // trivially outside
+    return FALSE; // trivially outside
 
   // transform to frame-buffer coordinates.
   fl->a.x = CXMTOF(ml->a.x);
@@ -828,7 +828,7 @@ boolean AM_clipMline(mline_t *ml, fline_t *fl) {
   DOOUTCODE(outcode2, fl->b.x, fl->b.y);
 
   if (outcode1 & outcode2)
-    return false;
+    return FALSE;
 
   while (outcode1 | outcode2) {
     // may be partially inside box
@@ -870,10 +870,10 @@ boolean AM_clipMline(mline_t *ml, fline_t *fl) {
     }
 
     if (outcode1 & outcode2)
-      return false; // trivially outside
+      return FALSE; // trivially outside
   }
 
-  return true;
+  return TRUE;
 }
 #undef DOOUTCODE
 
@@ -891,7 +891,7 @@ void AM_drawFline(fline_t *fl, int color) {
   register int ay;
   register int d;
 
-  static fuck = 0;
+  static int fuck = 0;
 
   // For debugging only
   if (fl->a.x < 0 || fl->a.x >= f_w || fl->a.y < 0 || fl->a.y >= f_h ||

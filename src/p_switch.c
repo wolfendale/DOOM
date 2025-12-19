@@ -240,7 +240,7 @@ boolean P_UseSpecialLine(mobj_t *thing, line_t *line, int side) {
       break;
 
     default:
-      return false;
+      return FALSE;
       break;
     }
   }
@@ -249,7 +249,7 @@ boolean P_UseSpecialLine(mobj_t *thing, line_t *line, int side) {
   if (!thing->player) {
     // never open secret doors
     if (line->flags & ML_SECRET)
-      return false;
+      return FALSE;
 
     switch (line->special) {
     case 1:  // MANUAL DOOR RAISE
@@ -259,7 +259,7 @@ boolean P_UseSpecialLine(mobj_t *thing, line_t *line, int side) {
       break;
 
     default:
-      return false;
+      return FALSE;
       break;
     }
   }
@@ -592,5 +592,5 @@ boolean P_UseSpecialLine(mobj_t *thing, line_t *line, int side) {
     break;
   }
 
-  return true;
+  return TRUE;
 }

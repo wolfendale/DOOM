@@ -22,13 +22,19 @@
 
 static const char rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 
+#ifdef _MSC_VER
+#else
+#include <sys/time.h>
+#include <time.h>
+#include <unistd.h>
+#endif 
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 
 #include <stdarg.h>
-#include <sys/time.h>
-#include <unistd.h>
 
 #include "doomdef.h"
 #include "i_sound.h"
@@ -44,6 +50,22 @@ static const char rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 #include "i_system.h"
 
 int mb_used = 6;
+
+#ifdef _MSC_VER
+typedef struct timeval {
+  uint32_t tv_sec;
+  uint32_t tv_usec;
+  uint32_t tv_nsec;
+} timeval;
+#define timespec timeval
+void gettimeofday(timeval* time, timeval* time2) {
+  time->tv_sec = 0;
+  time->tv_usec = 0;
+}
+void nanosleep(timespec *remaining, timespec *request) {
+}
+#endif
+
 
 void I_Tactile(int on, int off, int total) {
   // UNUSED.
@@ -66,11 +88,10 @@ byte *I_ZoneBase(int *size) {
 //
 int I_GetTime(void) {
   struct timeval tp;
-  struct timezone tzp;
   int newtics;
   static int basetime = 0;
 
-  gettimeofday(&tp, &tzp);
+  gettimeofday(&tp, NULL);
   if (!basetime)
     basetime = tp.tv_sec;
   newtics = (tp.tv_sec - basetime) * TICRATE + tp.tv_usec * TICRATE / 1000000;
@@ -98,15 +119,11 @@ void I_Quit(void) {
 }
 
 void I_WaitVBL(int count) {
-#ifdef SGI
-  sginap(1);
-#else
-#ifdef SUN
-  sleep(0);
-#else
-  usleep(count * (1000000 / 70));
-#endif
-#endif
+  struct timespec remaining, request = {
+    .tv_sec = 0,
+    .tv_nsec = count * (1000000000 / 70)
+  };
+  nanosleep(&remaining, &request);
 }
 
 void I_BeginRead(void) {}
@@ -144,6 +161,10 @@ void I_Error(char *error, ...) {
 
   D_QuitNetGame();
   I_ShutdownGraphics();
+
+  #ifdef _MSC_VER
+  __debugbreak();
+  #endif
 
   exit(-1);
 }

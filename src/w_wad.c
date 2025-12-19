@@ -23,17 +23,27 @@
 
 static const char rcsid[] = "$Id: w_wad.c,v 1.5 1997/02/03 16:47:57 b1 Exp $";
 
-#ifdef NORMALUNIX
+#ifdef _MSC_VER
+#include <io.h>
+#include <malloc.h>
+#define alloca _alloca
+#define strcmpi _stricmp
+#define strupr _strupr
+#define O_BINARY 0x8000
+#else
 #include <alloca.h>
+#include <strings.h>
+#include <unistd.h>
+#define strcmpi strcasecmp
+#define O_BINARY 0
+#endif
+
 #include <ctype.h>
 #include <fcntl.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
-#define O_BINARY 0
-#endif
 
 #include "doomtype.h"
 #include "i_system.h"
@@ -55,14 +65,14 @@ int numlumps;
 
 void **lumpcache;
 
-#define strcmpi strcasecmp
-
+#ifndef _MSC_VER
 void strupr(char *s) {
   while (*s) {
     *s = toupper(*s);
     s++;
   }
 }
+#endif
 
 int filelength(int handle) {
   struct stat fileinfo;

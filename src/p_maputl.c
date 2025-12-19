@@ -381,8 +381,8 @@ void P_SetThingPosition(mobj_t *thing) {
 // BLOCK MAP ITERATORS
 // For each line/thing in the given mapblock,
 // call the passed PIT_* function.
-// If the function returns false,
-// exit with false without checking anything else.
+// If the function returns FALSE,
+// exit with FALSE without checking anything else.
 //
 
 //
@@ -399,7 +399,7 @@ boolean P_BlockLinesIterator(int x, int y, boolean (*func)(line_t *)) {
   line_t *ld;
 
   if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight) {
-    return true;
+    return TRUE;
   }
 
   offset = y * bmapwidth + x;
@@ -415,9 +415,9 @@ boolean P_BlockLinesIterator(int x, int y, boolean (*func)(line_t *)) {
     ld->validcount = validcount;
 
     if (!func(ld))
-      return false;
+      return FALSE;
   }
-  return true; // everything was checked
+  return TRUE; // everything was checked
 }
 
 //
@@ -427,14 +427,14 @@ boolean P_BlockThingsIterator(int x, int y, boolean (*func)(mobj_t *)) {
   mobj_t *mobj;
 
   if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight) {
-    return true;
+    return TRUE;
   }
 
   for (mobj = blocklinks[y * bmapwidth + x]; mobj; mobj = mobj->bnext) {
     if (!func(mobj))
-      return false;
+      return FALSE;
   }
-  return true;
+  return TRUE;
 }
 
 //
@@ -455,7 +455,7 @@ int ptflags;
 //
 // A line is crossed if its endpoints
 // are on opposite sides of the trace.
-// Returns true if earlyout and a solid line hit.
+// Returns TRUE if earlyout and a solid line hit.
 //
 boolean PIT_AddLineIntercepts(line_t *ld) {
   int s1;
@@ -474,26 +474,26 @@ boolean PIT_AddLineIntercepts(line_t *ld) {
   }
 
   if (s1 == s2)
-    return true; // line isn't crossed
+    return TRUE; // line isn't crossed
 
   // hit the line
   P_MakeDivline(ld, &dl);
   frac = P_InterceptVector(&trace, &dl);
 
   if (frac < 0)
-    return true; // behind source
+    return TRUE; // behind source
 
   // try to early out the check
   if (earlyout && frac < FRACUNIT && !ld->backsector) {
-    return false; // stop checking
+    return FALSE; // stop checking
   }
 
   intercept_p->frac = frac;
-  intercept_p->isaline = true;
+  intercept_p->isaline = TRUE;
   intercept_p->d.line = ld;
   intercept_p++;
 
-  return true; // continue
+  return TRUE; // continue
 }
 
 //
@@ -535,7 +535,7 @@ boolean PIT_AddThingIntercepts(mobj_t *thing) {
   s2 = P_PointOnDivlineSide(x2, y2, &trace);
 
   if (s1 == s2)
-    return true; // line isn't crossed
+    return TRUE; // line isn't crossed
 
   dl.x = x1;
   dl.y = y1;
@@ -545,19 +545,19 @@ boolean PIT_AddThingIntercepts(mobj_t *thing) {
   frac = P_InterceptVector(&trace, &dl);
 
   if (frac < 0)
-    return true; // behind source
+    return TRUE; // behind source
 
   intercept_p->frac = frac;
-  intercept_p->isaline = false;
+  intercept_p->isaline = FALSE;
   intercept_p->d.thing = thing;
   intercept_p++;
 
-  return true; // keep going
+  return TRUE; // keep going
 }
 
 //
 // P_TraverseIntercepts
-// Returns true if the traverser function returns true
+// Returns TRUE if the traverser function returns TRUE
 // for all lines.
 //
 boolean P_TraverseIntercepts(traverser_t func, fixed_t maxfrac) {
@@ -580,7 +580,7 @@ boolean P_TraverseIntercepts(traverser_t func, fixed_t maxfrac) {
     }
 
     if (dist > maxfrac)
-      return true; // checked everything in range
+      return TRUE; // checked everything in range
 
 #if 0 // UNUSED
     {
@@ -590,24 +590,24 @@ boolean P_TraverseIntercepts(traverser_t func, fixed_t maxfrac) {
 	    if (scan->frac > maxfrac)
 		*in++ = *scan;
 	intercept_p = in;
-	return false;
+	return FALSE;
     }
 #endif
 
     if (!func(in))
-      return false; // don't bother going farther
+      return FALSE; // don't bother going farther
 
     in->frac = MAXINT;
   }
 
-  return true; // everything was traversed
+  return TRUE; // everything was traversed
 }
 
 //
 // P_PathTraverse
 // Traces a line from x1,y1 to x2,y2,
 // calling the traverser function for each.
-// Returns true if the traverser function returns true
+// Returns TRUE if the traverser function returns TRUE
 // for all lines.
 //
 boolean P_PathTraverse(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2,
@@ -699,12 +699,12 @@ boolean P_PathTraverse(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2,
   for (count = 0; count < 64; count++) {
     if (flags & PT_ADDLINES) {
       if (!P_BlockLinesIterator(mapx, mapy, PIT_AddLineIntercepts))
-        return false; // early out
+        return FALSE; // early out
     }
 
     if (flags & PT_ADDTHINGS) {
       if (!P_BlockThingsIterator(mapx, mapy, PIT_AddThingIntercepts))
-        return false; // early out
+        return FALSE; // early out
     }
 
     if (mapx == xt2 && mapy == yt2) {

@@ -104,7 +104,7 @@ void T_VerticalDoor(vldoor_t *door) {
   case -1:
     // DOWN
     res = T_MovePlane(door->sector, door->speed, door->sector->floorheight,
-                      false, 1, door->direction);
+                      FALSE, 1, door->direction);
     if (res == pastdest) {
       switch (door->type) {
       case blazeRaise:
@@ -144,7 +144,7 @@ void T_VerticalDoor(vldoor_t *door) {
 
   case 1:
     // UP
-    res = T_MovePlane(door->sector, door->speed, door->topheight, false, 1,
+    res = T_MovePlane(door->sector, door->speed, door->topheight, FALSE, 1,
                       door->direction);
 
     if (res == pastdest) {

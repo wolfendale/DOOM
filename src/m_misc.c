@@ -26,11 +26,16 @@
 
 static const char rcsid[] = "$Id: m_misc.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
 
+#ifdef _MSC_VER
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
+
 #include <fcntl.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
 
 #include <ctype.h>
 
@@ -103,15 +108,15 @@ boolean M_WriteFile(char const *name, void *source, int length) {
   handle = open(name, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0666);
 
   if (handle == -1)
-    return false;
+    return FALSE;
 
   count = write(handle, source, length);
   close(handle);
 
   if (count < length)
-    return false;
+    return FALSE;
 
-  return true;
+  return TRUE;
 }
 
 //
@@ -182,87 +187,62 @@ extern int showMessages;
 // machine-independent sound params
 extern int numChannels;
 
-// UNIX hack, to be removed.
-#ifdef SNDSERV
-extern char *sndserver_filename;
-extern int mb_used;
-#endif
-
-#ifdef LINUX
-char *mousetype;
-char *mousedev;
-#endif
-
 extern char *chat_macros[];
 
 typedef struct {
   char *name;
-  int *location;
-  int defaultvalue;
+  void *location;
+  void *defaultvalue;
   int scantranslate; // PC scan code hack
   int untranslated;  // lousy hack
 } default_t;
 
 default_t defaults[] = {
-    {"mouse_sensitivity", &mouseSensitivity, 5},
-    {"sfx_volume", &snd_SfxVolume, 8},
-    {"music_volume", &snd_MusicVolume, 8},
-    {"show_messages", &showMessages, 1},
+    {"mouse_sensitivity", &mouseSensitivity, &(int){5}},
+    {"sfx_volume", &snd_SfxVolume, &(int){8}},
+    {"music_volume", &snd_MusicVolume, &(int){8}},
+    {"show_messages", &showMessages, &(int){1}},
 
-#ifdef NORMALUNIX
-    {"key_right", &key_right, KEY_RIGHTARROW},
-    {"key_left", &key_left, KEY_LEFTARROW},
-    {"key_up", &key_up, KEY_UPARROW},
-    {"key_down", &key_down, KEY_DOWNARROW},
-    {"key_strafeleft", &key_strafeleft, ','},
-    {"key_straferight", &key_straferight, '.'},
+    {"key_right", &key_right, &(int){KEY_RIGHTARROW}},
+    {"key_left", &key_left, &(int){KEY_LEFTARROW}},
+    {"key_up", &key_up, &(int){KEY_UPARROW}},
+    {"key_down", &key_down, &(int){KEY_DOWNARROW}},
+    {"key_strafeleft", &key_strafeleft, &(int){','}},
+    {"key_straferight", &key_straferight, &(int){'.'}},
 
-    {"key_fire", &key_fire, KEY_RCTRL},
-    {"key_use", &key_use, ' '},
-    {"key_strafe", &key_strafe, KEY_RALT},
-    {"key_speed", &key_speed, KEY_RSHIFT},
+    {"key_fire", &key_fire, &(int){KEY_RCTRL}},
+    {"key_use", &key_use, &(int){' '}},
+    {"key_strafe", &key_strafe, &(int){KEY_RALT}},
+    {"key_speed", &key_speed, &(int){KEY_RSHIFT}},
 
-// UNIX hack, to be removed.
-#ifdef SNDSERV
-    {"sndserver", (int *)&sndserver_filename, (int)"sndserver"},
-    {"mb_used", &mb_used, 2},
-#endif
+    {"use_mouse", &usemouse, &(int){1}},
+    {"mouseb_fire", &mousebfire, &(int){0}},
+    {"mouseb_strafe", &mousebstrafe, &(int){1}},
+    {"mouseb_forward", &mousebforward, &(int){2}},
 
-#endif
+    {"use_joystick", &usejoystick, &(int){0}},
+    {"joyb_fire", &joybfire, &(int){0}},
+    {"joyb_strafe", &joybstrafe, &(int){1}},
+    {"joyb_use", &joybuse, &(int){3}},
+    {"joyb_speed", &joybspeed, &(int){2}},
 
-#ifdef LINUX
-    {"mousedev", (int *)&mousedev, (int)"/dev/ttyS0"},
-    {"mousetype", (int *)&mousetype, (int)"microsoft"},
-#endif
+    {"screenblocks", &screenblocks, &(int){9}},
+    {"detaillevel", &detailLevel, &(int){0}},
 
-    {"use_mouse", &usemouse, 1},
-    {"mouseb_fire", &mousebfire, 0},
-    {"mouseb_strafe", &mousebstrafe, 1},
-    {"mouseb_forward", &mousebforward, 2},
+    {"snd_channels", &numChannels, &(int){3}},
 
-    {"use_joystick", &usejoystick, 0},
-    {"joyb_fire", &joybfire, 0},
-    {"joyb_strafe", &joybstrafe, 1},
-    {"joyb_use", &joybuse, 3},
-    {"joyb_speed", &joybspeed, 2},
+    {"usegamma", &usegamma, &(int){0}},
 
-    {"screenblocks", &screenblocks, 9},
-    {"detaillevel", &detailLevel, 0},
-
-    {"snd_channels", &numChannels, 3},
-
-    {"usegamma", &usegamma, 0},
-
-    {"chatmacro0", (int *)&chat_macros[0], (int)HUSTR_CHATMACRO0},
-    {"chatmacro1", (int *)&chat_macros[1], (int)HUSTR_CHATMACRO1},
-    {"chatmacro2", (int *)&chat_macros[2], (int)HUSTR_CHATMACRO2},
-    {"chatmacro3", (int *)&chat_macros[3], (int)HUSTR_CHATMACRO3},
-    {"chatmacro4", (int *)&chat_macros[4], (int)HUSTR_CHATMACRO4},
-    {"chatmacro5", (int *)&chat_macros[5], (int)HUSTR_CHATMACRO5},
-    {"chatmacro6", (int *)&chat_macros[6], (int)HUSTR_CHATMACRO6},
-    {"chatmacro7", (int *)&chat_macros[7], (int)HUSTR_CHATMACRO7},
-    {"chatmacro8", (int *)&chat_macros[8], (int)HUSTR_CHATMACRO8},
-    {"chatmacro9", (int *)&chat_macros[9], (int)HUSTR_CHATMACRO9}
+    {"chatmacro0", &chat_macros[0], HUSTR_CHATMACRO0},
+    {"chatmacro1", &chat_macros[1], HUSTR_CHATMACRO1},
+    {"chatmacro2", &chat_macros[2], HUSTR_CHATMACRO2},
+    {"chatmacro3", &chat_macros[3], HUSTR_CHATMACRO3},
+    {"chatmacro4", &chat_macros[4], HUSTR_CHATMACRO4},
+    {"chatmacro5", &chat_macros[5], HUSTR_CHATMACRO5},
+    {"chatmacro6", &chat_macros[6], HUSTR_CHATMACRO6},
+    {"chatmacro7", &chat_macros[7], HUSTR_CHATMACRO7},
+    {"chatmacro8", &chat_macros[8], HUSTR_CHATMACRO8},
+    {"chatmacro9", &chat_macros[9], HUSTR_CHATMACRO9}
 
 };
 
@@ -283,7 +263,7 @@ void M_SaveDefaults(void) {
 
   for (i = 0; i < numdefaults; i++) {
     if (defaults[i].defaultvalue > -0xfff && defaults[i].defaultvalue < 0xfff) {
-      v = *defaults[i].location;
+      v = *((int*) defaults[i].location);
       fprintf(f, "%s\t\t%i\n", defaults[i].name, v);
     } else {
       fprintf(f, "%s\t\t\"%s\"\n", defaults[i].name,
@@ -312,7 +292,7 @@ void M_LoadDefaults(void) {
   // set everything to base values
   numdefaults = sizeof(defaults) / sizeof(defaults[0]);
   for (i = 0; i < numdefaults; i++)
-    *defaults[i].location = defaults[i].defaultvalue;
+    defaults[i].location = defaults[i].defaultvalue;
 
   // check for a custom default file
   i = M_CheckParm("-config");
@@ -326,11 +306,11 @@ void M_LoadDefaults(void) {
   f = fopen(defaultfile, "r");
   if (f) {
     while (!feof(f)) {
-      isstring = false;
+      isstring = FALSE;
       if (fscanf(f, "%79s %[^\n]\n", def, strparm) == 2) {
         if (strparm[0] == '"') {
           // get a string default
-          isstring = true;
+          isstring = TRUE;
           len = strlen(strparm);
           newstring = (char *)malloc(len);
           strparm[len - 1] = 0;
@@ -342,9 +322,9 @@ void M_LoadDefaults(void) {
         for (i = 0; i < numdefaults; i++)
           if (!strcmp(def, defaults[i].name)) {
             if (!isstring)
-              *defaults[i].location = parm;
+              *((int*) defaults[i].location) = parm;
             else
-              *defaults[i].location = (int)newstring;
+              defaults[i].location = newstring;
             break;
           }
       }

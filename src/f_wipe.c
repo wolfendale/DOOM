@@ -70,7 +70,7 @@ int wipe_doColorXForm(int width, int height, int ticks) {
   byte *e;
   int newval;
 
-  changed = false;
+  changed = FALSE;
   w = wipe_scr;
   e = wipe_scr_end;
 
@@ -82,14 +82,14 @@ int wipe_doColorXForm(int width, int height, int ticks) {
           *w = *e;
         else
           *w = newval;
-        changed = true;
+        changed = TRUE;
       } else if (*w < *e) {
         newval = *w + ticks;
         if (newval > *e)
           *w = *e;
         else
           *w = newval;
-        changed = true;
+        changed = TRUE;
       }
     }
     w++;
@@ -138,7 +138,7 @@ int wipe_doMelt(int width, int height, int ticks) {
 
   short *s;
   short *d;
-  boolean done = true;
+  boolean done = TRUE;
 
   width /= 2;
 
@@ -146,7 +146,7 @@ int wipe_doMelt(int width, int height, int ticks) {
     for (i = 0; i < width; i++) {
       if (y[i] < 0) {
         y[i]++;
-        done = false;
+        done = FALSE;
       } else if (y[i] < height) {
         dy = (y[i] < 16) ? y[i] + 1 : 8;
         if (y[i] + dy >= height)
@@ -166,7 +166,7 @@ int wipe_doMelt(int width, int height, int ticks) {
           d[idx] = *(s++);
           idx += width;
         }
-        done = false;
+        done = FALSE;
       }
     }
   }

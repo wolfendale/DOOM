@@ -207,7 +207,7 @@ void S_Start(void) {
   //  if (commercial && mnum > mus_e3m9)
   //      mnum -= mus_e3m9;
 
-  S_ChangeMusic(mnum, true);
+  S_ChangeMusic(mnum, TRUE);
 
   nextcleanup = 15;
 }
@@ -402,14 +402,14 @@ void S_StopSound(void *origin) {
 void S_PauseSound(void) {
   if (mus_playing && !mus_paused) {
     I_PauseSong(mus_playing->handle);
-    mus_paused = true;
+    mus_paused = TRUE;
   }
 }
 
 void S_ResumeSound(void) {
   if (mus_playing && mus_paused) {
     I_ResumeSong(mus_playing->handle);
-    mus_paused = false;
+    mus_paused = FALSE;
   }
 }
 
@@ -515,7 +515,7 @@ void S_SetSfxVolume(int volume) {
 //
 // Starts some music with the music id found in sounds.h.
 //
-void S_StartMusic(int m_id) { S_ChangeMusic(m_id, false); }
+void S_StartMusic(int m_id) { S_ChangeMusic(m_id, FALSE); }
 
 void S_ChangeMusic(int musicnum, int looping) {
   musicinfo_t *music;

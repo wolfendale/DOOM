@@ -22,6 +22,12 @@
 
 static const char rcsid[] = "$Id: m_argv.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 
+#ifdef _MSC_VER
+#define strcasecmp _stricmp
+#else
+#include <strings.h>
+#endif
+
 #include <string.h>
 
 int myargc;

@@ -26,17 +26,21 @@
 
 static const char rcsid[] = "$Id: d_main.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
 
+#ifdef _MSC_VER
+#include <io.h>
+#define R_OK            (1<<2)  /* test for read permission */
+#else
+#include <unistd.h>
+#endif
+
 #define BGCOLOR 7
 #define FGCOLOR 8
 
-#ifdef NORMALUNIX
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
-#endif
 
 #include "doomdef.h"
 #include "doomstat.h"
@@ -92,7 +96,7 @@ boolean fastparm;    // checkparm of -fast
 
 boolean drone;
 
-boolean singletics = false; // debug flag to cancel adaptiveness
+boolean singletics = FALSE; // debug flag to cancel adaptiveness
 
 // extern int soundVolume;
 // extern  int	sfxVolume;
@@ -168,10 +172,10 @@ extern int showMessages;
 void R_ExecuteSetViewSize(void);
 
 void D_Display(void) {
-  static boolean viewactivestate = false;
-  static boolean menuactivestate = false;
-  static boolean inhelpscreensstate = false;
-  static boolean fullscreen = false;
+  static boolean viewactivestate = FALSE;
+  static boolean menuactivestate = FALSE;
+  static boolean inhelpscreensstate = FALSE;
+  static boolean fullscreen = FALSE;
   static gamestate_t oldgamestate = -1;
   static int borderdrawcount;
   int nowtime;
@@ -185,7 +189,7 @@ void D_Display(void) {
   if (nodrawers)
     return; // for comparative timing / profiling
 
-  redrawsbar = false;
+  redrawsbar = FALSE;
 
   // change the view size if needed
   if (setsizeneeded) {
@@ -196,10 +200,10 @@ void D_Display(void) {
 
   // save the current screen if about to wipe
   if (gamestate != wipegamestate) {
-    wipe = true;
+    wipe = TRUE;
     wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
   } else
-    wipe = false;
+    wipe = FALSE;
 
   if (gamestate == GS_LEVEL && gametic)
     HU_Erase();
@@ -212,9 +216,9 @@ void D_Display(void) {
     if (automapactive)
       AM_Drawer();
     if (wipe || (viewheight != 200 && fullscreen))
-      redrawsbar = true;
+      redrawsbar = TRUE;
     if (inhelpscreensstate && !inhelpscreens)
-      redrawsbar = true; // just put away the help screen
+      redrawsbar = TRUE; // just put away the help screen
     ST_Drawer(viewheight == 200, redrawsbar);
     fullscreen = viewheight == 200;
     break;
@@ -248,7 +252,7 @@ void D_Display(void) {
 
   // see if the border needs to be initially drawn
   if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL) {
-    viewactivestate = false; // view was not active
+    viewactivestate = FALSE; // view was not active
     R_FillBackScreen();      // draw the pattern into the back screen
   }
 
@@ -386,7 +390,7 @@ void D_PageDrawer(void) {
 // D_AdvanceDemo
 // Called after each demo or intro demosequence finishes
 //
-void D_AdvanceDemo(void) { advancedemo = true; }
+void D_AdvanceDemo(void) { advancedemo = TRUE; }
 
 //
 // This cycles through the demo sequences.
@@ -394,9 +398,9 @@ void D_AdvanceDemo(void) { advancedemo = true; }
 //
 void D_DoAdvanceDemo(void) {
   players[consoleplayer].playerstate = PST_LIVE; // not reborn
-  advancedemo = false;
-  usergame = false; // no save / end game here
-  paused = false;
+  advancedemo = FALSE;
+  usergame = FALSE; // no save / end game here
+  paused = FALSE;
   gameaction = ga_nothing;
 
   if (gamemode == retail)
@@ -498,7 +502,6 @@ void IdentifyVersion(void) {
   char *plutoniawad;
   char *tntwad;
 
-#ifdef NORMALUNIX
   char *home;
   char *doomwaddir;
   doomwaddir = getenv("DOOMWADDIR");
@@ -537,11 +540,10 @@ void IdentifyVersion(void) {
   if (!home)
     I_Error("Please set $HOME to your home directory");
   sprintf(basedefault, "%s/.doomrc", home);
-#endif
 
   if (M_CheckParm("-shdev")) {
     gamemode = shareware;
-    devparm = true;
+    devparm = TRUE;
     D_AddFile(DEVDATA "doom1.wad");
     D_AddFile(DEVMAPS "data_se/texture1.lmp");
     D_AddFile(DEVMAPS "data_se/pnames.lmp");
@@ -551,7 +553,7 @@ void IdentifyVersion(void) {
 
   if (M_CheckParm("-regdev")) {
     gamemode = registered;
-    devparm = true;
+    devparm = TRUE;
     D_AddFile(DEVDATA "doom.wad");
     D_AddFile(DEVMAPS "data_se/texture1.lmp");
     D_AddFile(DEVMAPS "data_se/texture2.lmp");
@@ -562,7 +564,7 @@ void IdentifyVersion(void) {
 
   if (M_CheckParm("-comdev")) {
     gamemode = commercial;
-    devparm = true;
+    devparm = TRUE;
     /* I don't bother
     if(plutonia)
         D_AddFile (DEVDATA"plutonia.wad");
@@ -574,6 +576,13 @@ void IdentifyVersion(void) {
     D_AddFile(DEVMAPS "cdata/texture1.lmp");
     D_AddFile(DEVMAPS "cdata/pnames.lmp");
     strcpy(basedefault, DEVDATA "default.cfg");
+    return;
+  }
+
+  if (M_CheckParm("-dev")) {
+    gamemode = registered;
+    devparm = TRUE;
+    D_AddFile(doomwad);
     return;
   }
 
@@ -711,7 +720,7 @@ void D_DoomMain(void) {
   IdentifyVersion();
 
   setbuf(stdout, NULL);
-  modifiedgame = false;
+  modifiedgame = FALSE;
 
   nomonsters = M_CheckParm("-nomonsters");
   respawnparm = M_CheckParm("-respawn");
@@ -841,7 +850,7 @@ void D_DoomMain(void) {
   if (p) {
     // the parms after p are wadfile/lump names,
     // until end of parms or another - preceded parm
-    modifiedgame = true; // homebrew levels
+    modifiedgame = TRUE; // homebrew levels
     while (++p != myargc && myargv[p][0] != '-')
       D_AddFile(myargv[p]);
   }
@@ -861,19 +870,19 @@ void D_DoomMain(void) {
   startskill = sk_medium;
   startepisode = 1;
   startmap = 1;
-  autostart = false;
+  autostart = FALSE;
 
   p = M_CheckParm("-skill");
   if (p && p < myargc - 1) {
     startskill = myargv[p + 1][0] - '1';
-    autostart = true;
+    autostart = TRUE;
   }
 
   p = M_CheckParm("-episode");
   if (p && p < myargc - 1) {
     startepisode = myargv[p + 1][0] - '0';
     startmap = 1;
-    autostart = true;
+    autostart = TRUE;
   }
 
   p = M_CheckParm("-timer");
@@ -898,7 +907,7 @@ void D_DoomMain(void) {
       startepisode = myargv[p + 1][0] - '0';
       startmap = myargv[p + 2][0] - '0';
     }
-    autostart = true;
+    autostart = TRUE;
   }
 
   // init subsystems
@@ -1018,12 +1027,12 @@ void D_DoomMain(void) {
 
   if (p && p < myargc - 1) {
     G_RecordDemo(myargv[p + 1]);
-    autostart = true;
+    autostart = TRUE;
   }
 
   p = M_CheckParm("-playdemo");
   if (p && p < myargc - 1) {
-    singledemo = true; // quit after one demo
+    singledemo = TRUE; // quit after one demo
     G_DeferedPlayDemo(myargv[p + 1]);
     D_DoomLoop(); // never returns
   }

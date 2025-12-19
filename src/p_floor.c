@@ -57,7 +57,7 @@ result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest,
         lastpos = sector->floorheight;
         sector->floorheight = dest;
         flag = P_ChangeSector(sector, crush);
-        if (flag == true) {
+        if (flag == TRUE) {
           sector->floorheight = lastpos;
           P_ChangeSector(sector, crush);
           // return crushed;
@@ -67,7 +67,7 @@ result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest,
         lastpos = sector->floorheight;
         sector->floorheight -= speed;
         flag = P_ChangeSector(sector, crush);
-        if (flag == true) {
+        if (flag == TRUE) {
           sector->floorheight = lastpos;
           P_ChangeSector(sector, crush);
           return crushed;
@@ -81,7 +81,7 @@ result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest,
         lastpos = sector->floorheight;
         sector->floorheight = dest;
         flag = P_ChangeSector(sector, crush);
-        if (flag == true) {
+        if (flag == TRUE) {
           sector->floorheight = lastpos;
           P_ChangeSector(sector, crush);
           // return crushed;
@@ -92,8 +92,8 @@ result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest,
         lastpos = sector->floorheight;
         sector->floorheight += speed;
         flag = P_ChangeSector(sector, crush);
-        if (flag == true) {
-          if (crush == true)
+        if (flag == TRUE) {
+          if (crush == TRUE)
             return crushed;
           sector->floorheight = lastpos;
           P_ChangeSector(sector, crush);
@@ -114,7 +114,7 @@ result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest,
         sector->ceilingheight = dest;
         flag = P_ChangeSector(sector, crush);
 
-        if (flag == true) {
+        if (flag == TRUE) {
           sector->ceilingheight = lastpos;
           P_ChangeSector(sector, crush);
           // return crushed;
@@ -126,8 +126,8 @@ result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest,
         sector->ceilingheight -= speed;
         flag = P_ChangeSector(sector, crush);
 
-        if (flag == true) {
-          if (crush == true)
+        if (flag == TRUE) {
+          if (crush == TRUE)
             return crushed;
           sector->ceilingheight = lastpos;
           P_ChangeSector(sector, crush);
@@ -142,7 +142,7 @@ result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest,
         lastpos = sector->ceilingheight;
         sector->ceilingheight = dest;
         flag = P_ChangeSector(sector, crush);
-        if (flag == true) {
+        if (flag == TRUE) {
           sector->ceilingheight = lastpos;
           P_ChangeSector(sector, crush);
           // return crushed;
@@ -154,7 +154,7 @@ result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest,
         flag = P_ChangeSector(sector, crush);
 // UNUSED
 #if 0
-		if (flag == true)
+		if (flag == TRUE)
 		{
 		    sector->ceilingheight = lastpos;
 		    P_ChangeSector(sector,crush);
@@ -233,7 +233,7 @@ int EV_DoFloor(line_t *line, floor_e floortype) {
     sec->specialdata = floor;
     floor->thinker.function.acp1 = (actionf_p1)T_MoveFloor;
     floor->type = floortype;
-    floor->crush = false;
+    floor->crush = FALSE;
 
     switch (floortype) {
     case lowerFloor:
@@ -260,7 +260,7 @@ int EV_DoFloor(line_t *line, floor_e floortype) {
       break;
 
     case raiseFloorCrush:
-      floor->crush = true;
+      floor->crush = TRUE;
     case raiseFloor:
       floor->direction = 1;
       floor->sector = sec;

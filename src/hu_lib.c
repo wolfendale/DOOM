@@ -43,7 +43,7 @@ void HUlib_init(void) {}
 void HUlib_clearTextLine(hu_textline_t *t) {
   t->len = 0;
   t->l[0] = 0;
-  t->needsupdate = true;
+  t->needsupdate = TRUE;
 }
 
 void HUlib_initTextLine(hu_textline_t *t, int x, int y, patch_t **f, int sc) {
@@ -57,23 +57,23 @@ void HUlib_initTextLine(hu_textline_t *t, int x, int y, patch_t **f, int sc) {
 boolean HUlib_addCharToTextLine(hu_textline_t *t, char ch) {
 
   if (t->len == HU_MAXLINELENGTH)
-    return false;
+    return FALSE;
   else {
     t->l[t->len++] = ch;
     t->l[t->len] = 0;
     t->needsupdate = 4;
-    return true;
+    return TRUE;
   }
 }
 
 boolean HUlib_delCharFromTextLine(hu_textline_t *t) {
 
   if (!t->len)
-    return false;
+    return FALSE;
   else {
     t->l[--t->len] = 0;
     t->needsupdate = 4;
-    return true;
+    return TRUE;
   }
 }
 
@@ -112,7 +112,7 @@ void HUlib_eraseTextLine(hu_textline_t *l) {
   int lh;
   int y;
   int yoffset;
-  static boolean lastautomapactive = true;
+  static boolean lastautomapactive = TRUE;
 
   // Only erases when NOT in automap and the screen is reduced,
   // and the text must either need updating or refreshing
@@ -144,7 +144,7 @@ void HUlib_initSText(hu_stext_t *s, int x, int y, int h, patch_t **font,
 
   s->h = h;
   s->on = on;
-  s->laston = true;
+  s->laston = TRUE;
   s->cl = 0;
   for (i = 0; i < h; i++)
     HUlib_initTextLine(&s->l[i], x, y - i * (SHORT(font[0]->height) + 1), font,
@@ -191,7 +191,7 @@ void HUlib_drawSText(hu_stext_t *s) {
     l = &s->l[idx];
 
     // need a decision made here on whether to skip the draw
-    HUlib_drawTextLine(l, false); // no cursor, please
+    HUlib_drawTextLine(l, FALSE); // no cursor, please
   }
 }
 
@@ -211,7 +211,7 @@ void HUlib_initIText(hu_itext_t *it, int x, int y, patch_t **font,
                      int startchar, boolean *on) {
   it->lm = 0; // default left margin is start of text
   it->on = on;
-  it->laston = true;
+  it->laston = TRUE;
   HUlib_initTextLine(&it->l, x, y, font, startchar);
 }
 
@@ -239,7 +239,7 @@ void HUlib_addPrefixToIText(hu_itext_t *it, char *str) {
 }
 
 // wrapper function for handling general keyed input.
-// returns true if it ate the key
+// returns TRUE if it ate the key
 boolean HUlib_keyInIText(hu_itext_t *it, unsigned char ch) {
 
   if (ch >= ' ' && ch <= '_')
@@ -247,9 +247,9 @@ boolean HUlib_keyInIText(hu_itext_t *it, unsigned char ch) {
   else if (ch == KEY_BACKSPACE)
     HUlib_delCharFromIText(it);
   else if (ch != KEY_ENTER)
-    return false; // did not eat key
+    return FALSE; // did not eat key
 
-  return true; // ate the key
+  return TRUE; // ate the key
 }
 
 void HUlib_drawIText(hu_itext_t *it) {
@@ -258,7 +258,7 @@ void HUlib_drawIText(hu_itext_t *it) {
 
   if (!*it->on)
     return;
-  HUlib_drawTextLine(l, true); // draw the line w/ cursor
+  HUlib_drawTextLine(l, TRUE); // draw the line w/ cursor
 }
 
 void HUlib_eraseIText(hu_itext_t *it) {

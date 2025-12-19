@@ -23,19 +23,6 @@
 
 static const char rcsid[] = "$Id: i_x.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
 
-#include <stdlib.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <unistd.h>
-
-#include <stdarg.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/types.h>
-
-#include <netinet/in.h>
-#include <signal.h>
-
 #include "d_main.h"
 #include "doomstat.h"
 #include "i_system.h"
@@ -63,7 +50,7 @@ void I_StartFrame(void) {
 
 static int lastmousex = 0;
 static int lastmousey = 0;
-boolean mousemoved = false;
+boolean mousemoved = FALSE;
 
 void I_GetEvent(void) {}
 

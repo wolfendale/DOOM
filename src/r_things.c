@@ -102,17 +102,17 @@ void R_InstallSpriteLump(int lump, unsigned frame, unsigned rotation,
 
   if (rotation == 0) {
     // the lump should be used for all rotations
-    if (sprtemp[frame].rotate == false)
+    if (sprtemp[frame].rotate == FALSE)
       I_Error("R_InitSprites: Sprite %s frame %c has "
               "multip rot=0 lump",
               spritename, 'A' + frame);
 
-    if (sprtemp[frame].rotate == true)
+    if (sprtemp[frame].rotate == TRUE)
       I_Error("R_InitSprites: Sprite %s frame %c has rotations "
               "and a rot=0 lump",
               spritename, 'A' + frame);
 
-    sprtemp[frame].rotate = false;
+    sprtemp[frame].rotate = FALSE;
     for (r = 0; r < 8; r++) {
       sprtemp[frame].lump[r] = lump - firstspritelump;
       sprtemp[frame].flip[r] = (byte)flipped;
@@ -121,12 +121,12 @@ void R_InstallSpriteLump(int lump, unsigned frame, unsigned rotation,
   }
 
   // the lump is only used for one rotation
-  if (sprtemp[frame].rotate == false)
+  if (sprtemp[frame].rotate == FALSE)
     I_Error("R_InitSprites: Sprite %s frame %c has rotations "
             "and a rot=0 lump",
             spritename, 'A' + frame);
 
-  sprtemp[frame].rotate = true;
+  sprtemp[frame].rotate = TRUE;
 
   // make 0 based
   rotation--;
@@ -166,14 +166,15 @@ void R_InitSpriteDefs(char **namelist) {
   int patched;
 
   // count the number of sprite names
-  check = namelist;
-  while (*check != NULL)
-    check++;
+  // check = namelist;
+  // while (*check != NULL)
+  //   check++;
 
-  numsprites = check - namelist;
+  // numsprites = check - namelist;
+  numsprites = NUMSPRITES;
 
-  if (!numsprites)
-    return;
+  // if (!numsprites)
+  //   return;
 
   sprites = Z_Malloc(numsprites * sizeof(*sprites), PU_STATIC, NULL);
 
@@ -202,12 +203,12 @@ void R_InitSpriteDefs(char **namelist) {
         else
           patched = l;
 
-        R_InstallSpriteLump(patched, frame, rotation, false);
+        R_InstallSpriteLump(patched, frame, rotation, FALSE);
 
         if (lumpinfo[l].name[6]) {
           frame = lumpinfo[l].name[6] - 'A';
           rotation = lumpinfo[l].name[7] - '0';
-          R_InstallSpriteLump(l, frame, rotation, true);
+          R_InstallSpriteLump(l, frame, rotation, TRUE);
         }
       }
     }
